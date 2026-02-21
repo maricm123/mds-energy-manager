@@ -5,6 +5,13 @@ from rack.models import Rack
 from django.utils import timezone
 
 
+class ActiveManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            deleted_at__isnull=True
+        )
+
+
 class Device(
     TimeStampable,
     DeletedAt
@@ -22,6 +29,9 @@ class Device(
         null=True,
         on_delete=models.CASCADE
     )
+
+    objects = ActiveManager()
+    all_objects = models.Manager()
 
     def __str__(self):
         return self.name

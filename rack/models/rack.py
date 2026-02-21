@@ -4,6 +4,13 @@ from django.core.validators import MinValueValidator
 from django.utils import timezone
 
 
+class ActiveManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            deleted_at__isnull=True
+        )
+
+
 class Rack(
     TimeStampable,
     DeletedAt
@@ -13,6 +20,9 @@ class Rack(
     serial_number = models.CharField(max_length=100, blank=False, null=False, unique=True)
     total_units = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     max_electricity_sustained = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+
+    objects = ActiveManager()
+    all_objects = models.Manager()
 
     def __str__(self):
         return self.name
