@@ -13,7 +13,13 @@ class Device(
     number_of_rack_units = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     electricity_consumption = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
-    rack = models.ForeignKey(Rack, related_name="devices", blank=True, null=True, on_delete=models.CASCADE)
+    rack = models.ForeignKey(
+        Rack,
+        related_name="devices",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return self.name
