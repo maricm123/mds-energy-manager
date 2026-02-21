@@ -1,5 +1,6 @@
 from rest_framework import generics, serializers
 from rest_framework.response import Response
+from apis.api_mds.serializers.serializers_rack import RackSerializer, CreateRackSerializer
 from rack.models import Rack
 
 
@@ -12,6 +13,21 @@ class GetAllRacksView(generics.ListAPIView):
 
     def get_queryset(self):
         return Rack.objects.all()
+
+
+class GetRackView(generics.RetrieveAPIView):
+    lookup_field = "id"
+    serializer_class = RackSerializer
+
+    def get_object(self):
+        return Rack.objects.get(id=self.kwargs.get("id"))
+
+
+class CreateRackView(generics.CreateAPIView):
+    serializer_class = CreateRackSerializer
+
+    def post(self):
+        pass
 
 
 class DeleteRackView(generics.DestroyAPIView):

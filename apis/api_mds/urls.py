@@ -29,6 +29,11 @@ endpoints_urlpatterns = [
         name="get-all-racks"
     ),
     path(
+        "get-rack/<int:id>",
+        views_rack.GetRackView.as_view(),
+        name="get-rack"
+    ),
+    path(
         "delete-rack/<int:id>",
         views_rack.DeleteRackView.as_view(),
         name="delete-rack"
