@@ -12,12 +12,22 @@ app_name = "api-mds"
 endpoints_urlpatterns = [
     # DEVICES
     path(
+        "get-all-devices",
+        views_devices.GetAllDevicesView.as_view(),
+        name="get-all-devices"
+    ),
+    path(
         "delete-device/<int:id>",
         views_devices.DeleteDeviceView.as_view(),
         name="delete-device"
     ),
 
     # RACKS
+    path(
+        "get-all-racks",
+        views_rack.GetAllRacksView.as_view(),
+        name="get-all-racks"
+    ),
     path(
         "delete-rack/<int:id>",
         views_rack.DeleteRackView.as_view(),
