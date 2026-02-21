@@ -15,3 +15,10 @@ class TimeStampable(models.Model):
         auto_now=True,
         verbose_name=_("last modification")
     )
+
+
+class DeletedAt(models.Model):
+    class Meta:
+        abstract = True
+
+    deleted_at = models.DateTimeField(null=True, blank=True)
