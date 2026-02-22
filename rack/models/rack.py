@@ -29,4 +29,5 @@ class Rack(
 
     def delete(self):
         self.deleted_at = timezone.now()
+        # Implement delete for rack unit because of cascade and soft delete
         self.save(update_fields=["deleted_at"])
