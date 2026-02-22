@@ -10,6 +10,10 @@ def calculate_total_power_used_from_rack_units(rack_units: Iterable[RackUnit]) -
 
     for rack_unit in rack_units:
         device = rack_unit.device
+
+        if device.id in seen_device_ids:
+            continue
+
         seen_device_ids.add(device.id)
         total_power_used += device.electricity_consumption
 

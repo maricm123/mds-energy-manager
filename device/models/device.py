@@ -1,7 +1,6 @@
 from core.models.abstract_models import TimeStampable, DeletedAt
 from django.db import models
 from django.core.validators import MinValueValidator
-from rack.models import Rack
 from django.utils import timezone
 
 

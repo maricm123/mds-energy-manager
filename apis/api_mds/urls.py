@@ -16,6 +16,18 @@ endpoints_urlpatterns = [
         views_devices.GetAllDevicesView.as_view(),
         name="get-all-devices"
     ),
+
+    path(
+        "create-device",
+        views_devices.CreateDeviceView.as_view(),
+        name="create-device"
+    ),
+
+    path(
+        "add-device-to-rack",
+        views_devices.AddDeviceToRackView.as_view(),
+        name="add-device-to-rack"
+    ),
     path(
         "delete-device/<int:id>",
         views_devices.DeleteDeviceView.as_view(),
