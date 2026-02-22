@@ -4,11 +4,18 @@ from django.core.validators import MinValueValidator
 from django.utils import timezone
 
 
-class ActiveManager(models.Manager):
+class DeviceQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(deleted_at__isnull=True)
+
+
+class DeviceManager(models.Manager.from_queryset(DeviceQuerySet)):
+    pass
+
+
+class ActiveDeviceManager(DeviceManager):
     def get_queryset(self):
-        return super().get_queryset().filter(
-            deleted_at__isnull=True
-        )
+        return super().get_queryset().active()
 
 
 class Device(
@@ -21,8 +28,8 @@ class Device(
     number_of_rack_units = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     electricity_consumption = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
-    objects = ActiveManager()
-    all_objects = models.Manager()
+    objects = ActiveDeviceManager()
+    all_objects = DeviceManager()
 
     def __str__(self):
         return self.name
