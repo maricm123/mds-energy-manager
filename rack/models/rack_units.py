@@ -7,12 +7,23 @@ from rack.models import Rack
 from django.core.validators import MinValueValidator
 
 
+class RackUnitQuerySet(models.QuerySet):
+    def device_already_exist_in_rack(self, device_id):
+        return self.filter(device_id=device_id).exists()
+
+
+class RackUnitManager(models.Manager.from_queryset(RackUnitQuerySet)):
+    pass
+
+
 class RackUnit(
     TimeStampable
 ):
     rack = models.ForeignKey(Rack, related_name="rack_units", on_delete=CASCADE)
     device = models.ForeignKey(Device, related_name="rack_units", on_delete=CASCADE)
     unit = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+
+    objects = RackUnitManager()
 
     class Meta:
         constraints = [
