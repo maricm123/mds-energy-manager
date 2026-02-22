@@ -33,4 +33,8 @@ class RackSerializer(serializers.ModelSerializer):
 
 
 class CreateRackSerializer(serializers.Serializer):
-    pass
+    name = serializers.CharField(max_length=100)
+    description = serializers.CharField(required=False, allow_blank=True)
+    serial_number = serializers.CharField(max_length=100)
+    total_units = serializers.IntegerField(min_value=1)
+    max_electricity_sustained = serializers.IntegerField(min_value=1)

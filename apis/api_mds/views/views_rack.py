@@ -1,7 +1,10 @@
-from rest_framework import generics, serializers
+from rest_framework import generics, serializers, status
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from apis.api_mds.serializers.serializers_rack import RackSerializer, CreateRackSerializer
 from rack.models import Rack
+from rack.services import create_rack
 
 
 class GetAllRacksView(generics.ListAPIView):
@@ -23,11 +26,14 @@ class GetRackView(generics.RetrieveAPIView):
         return Rack.objects.get(id=self.kwargs.get("id"))
 
 
-class CreateRackView(generics.CreateAPIView):
-    serializer_class = CreateRackSerializer
+class CreateRackView(APIView):
+    def post(self, request):
+        serializer = CreateRackSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        rack = create_rack(serializer.validated_data)
 
-    def post(self):
-        pass
+        new_rack = Rack.objects.get(id=rack.id)
+        return Response(RackSerializer(new_rack).data, status=status.HTTP_201_CREATED)
 
 
 class DeleteRackView(generics.DestroyAPIView):
