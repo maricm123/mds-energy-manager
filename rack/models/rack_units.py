@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import CASCADE
 from core.models.abstract_models import TimeStampable
@@ -21,3 +22,27 @@ class RackUnit(
 
     def __str__(self):
         return f"{self.rack} - {self.device} - {self.unit}"
+
+    def clean(self):
+        """
+        Validation mostly for admin dashboard
+        """
+        super().clean()
+
+        if not self.rack or not self.device:
+            return
+
+        if self.unit and self.rack.total_units and self.unit > self.rack.total_units:
+            raise ValidationError({"unit": "Unit exceeds rack total units."})
+
+        already_populated_units = self.__class__.objects.filter(rack_id=self.rack.id, device_id=self.device.id)
+
+        if self.id:
+            already_populated_units = already_populated_units.exclude(id=self.id)
+
+        current_count = already_populated_units.count()
+
+        if current_count >= self.device.number_of_rack_units:
+            raise ValidationError(
+                {"device": "This device already have maximum number of rack units in this rack."}
+            )
