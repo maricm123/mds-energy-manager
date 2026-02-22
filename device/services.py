@@ -9,7 +9,12 @@ from rack.selectors import get_already_populated_units_for_given_rack
 from rack.services import create_bulk_rack_units
 
 
-def _find_first_free_block(*, populated_units: set[int], total_units: int, block_size: int) -> list[int] | None:
+def _find_first_free_block(
+        *,
+        populated_units: set[int],
+        total_units: int,
+        block_size: int
+) -> list[int] | None:
     latest_start = total_units - block_size + 1
     if latest_start < 1:
         return None

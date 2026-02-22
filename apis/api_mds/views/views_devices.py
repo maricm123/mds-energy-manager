@@ -1,7 +1,10 @@
 from rest_framework import generics, serializers, status
 from rest_framework.views import APIView
-from apis.api_mds.serializers.serializers_device import AddDeviceToRackSerializer, DeviceOutputSerializer, \
+from apis.api_mds.serializers.serializers_device import (
+    AddDeviceToRackSerializer,
+    DeviceOutputSerializer,
     CreateDeviceSerializer
+)
 from apis.api_mds.serializers.serializers_rack import RackSerializer
 from device.models import Device
 from rest_framework.response import Response

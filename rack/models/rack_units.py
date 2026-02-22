@@ -49,7 +49,9 @@ class RackUnit(
         if self.unit and self.rack.total_units and self.unit > self.rack.total_units:
             raise ValidationError({"unit": "Unit exceeds rack total units."})
 
-        already_populated_units = self.__class__.objects.filter(rack_id=self.rack.id, device_id=self.device.id)
+        already_populated_units = self.__class__.objects.filter(
+            rack_id=self.rack.id, device_id=self.device.id
+        )
 
         if self.id:
             already_populated_units = already_populated_units.exclude(id=self.id)
