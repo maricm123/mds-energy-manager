@@ -11,6 +11,9 @@ class RackUnitQuerySet(models.QuerySet):
     def device_already_exist_in_rack(self, device_id):
         return self.filter(device_id=device_id).exists()
 
+    def get_existing_devices(self, rack_id):
+        return self.filter(rack_id=rack_id).values_list("device_id", flat=True).distinct()
+
 
 class RackUnitManager(models.Manager.from_queryset(RackUnitQuerySet)):
     pass

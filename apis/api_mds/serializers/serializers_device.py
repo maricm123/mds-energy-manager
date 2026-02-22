@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from device.models import Device
 from django.shortcuts import get_object_or_404
-from rack.models import Rack
+from rack.models import Rack, RackUnit
 
 
 class DeviceOutputSerializer(serializers.ModelSerializer):
@@ -21,13 +21,20 @@ class AddDeviceToRackSerializer(serializers.Serializer):
     device_id = serializers.IntegerField(min_value=1, required=True)
     rack_id = serializers.IntegerField(min_value=1, required=True)
 
-    def validate_device_id(self, value):
-        device = get_object_or_404(Device, id=value)
-        return device
+    def validate(self, data):
+        device = get_object_or_404(Device, id=data["device_id"])
+        rack = get_object_or_404(Rack, id=data["rack_id"])
 
-    def validate_rack_id(self, value):
-        rack = get_object_or_404(Rack, id=value)
-        return rack
+        if RackUnit.objects.device_already_exist_in_rack(device.id):
+            raise serializers.ValidationError(
+                {"device_id": "This device is already placed in a rack."}
+            )
+
+        data["device"] = device
+        data["rack"] = rack
+        data.pop("device_id", None)
+        data.pop("rack_id", None)
+        return data
 
 
 class CreateDeviceSerializer(serializers.Serializer):
