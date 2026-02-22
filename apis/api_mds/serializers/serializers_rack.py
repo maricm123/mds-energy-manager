@@ -1,5 +1,6 @@
 from django.db.models import Sum
 from rest_framework import serializers
+from apis.api_mds.serializers.serializers_device import DeviceOutputSerializer
 from rack.models import Rack
 
 
@@ -8,6 +9,7 @@ class RackSerializer(serializers.ModelSerializer):
     total_power_used = serializers.SerializerMethodField(read_only=True)
     total_power_used_display = serializers.SerializerMethodField(read_only=True)
     max_electricity_sustained_display = serializers.SerializerMethodField(read_only=True)
+    devices = DeviceOutputSerializer(many=True, read_only=True)
 
     class Meta:
         model = Rack
