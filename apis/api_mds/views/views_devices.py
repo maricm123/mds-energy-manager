@@ -11,7 +11,7 @@ class GetAllDevicesView(generics.ListAPIView):
     serializer_class = OutputSerializer
 
     def get_queryset(self):
-        return Device.objects.select_related('rack').all()
+        return Device.objects.all()
 
 
 class DeleteDeviceView(generics.DestroyAPIView):

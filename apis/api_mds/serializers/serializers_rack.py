@@ -1,6 +1,8 @@
-from django.db.models import Sum
 from rest_framework import serializers
-from apis.api_mds.serializers.serializers_device import DeviceOutputSerializer
+from apis.utils import (
+    build_devices_with_units_from_rack_units,
+    calculate_total_power_used_from_rack_units
+)
 from rack.models import Rack
 
 
@@ -9,25 +11,23 @@ class RackSerializer(serializers.ModelSerializer):
     total_power_used = serializers.SerializerMethodField(read_only=True)
     total_power_used_display = serializers.SerializerMethodField(read_only=True)
     max_electricity_sustained_display = serializers.SerializerMethodField(read_only=True)
-    devices = DeviceOutputSerializer(many=True, read_only=True)
+    devices = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Rack
         fields = "__all__"
 
     def get_total_units_used(self, object):
-        return object.devices.aggregate(
-            total=Sum("number_of_rack_units")
-        )["total"] or 0
+        return object.rack_units.count()
 
     def get_total_power_used(self, object):
-        return object.devices.aggregate(
-            total=Sum("electricity_consumption")
-        )["total"] or 0
+        return calculate_total_power_used_from_rack_units(object.rack_units.all())
+
+    def get_devices(self, object):
+        return build_devices_with_units_from_rack_units(object.rack_units.all())
 
     def get_total_power_used_display(self, object):
-        value = self.get_total_power_used(object)
-        return f"{value} W"
+        return f"{self.get_total_power_used(object)} W"
 
     def get_max_electricity_sustained_display(self, object):
         value = object.max_electricity_sustained

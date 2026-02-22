@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from apis.api_mds.serializers.serializers_rack import RackSerializer, CreateRackSerializer
 from rack.models import Rack
+from rack.selectors import get_rack_with_device_units
 from rack.services import create_rack
 
 
@@ -22,8 +23,7 @@ class GetRackView(generics.RetrieveAPIView):
     serializer_class = RackSerializer
 
     def get_object(self):
-        # move to selector
-        return Rack.objects.prefetch_related("devices").get(id=self.kwargs.get("id"))
+        return get_rack_with_device_units(rack_id=self.kwargs.get("id"))
 
 
 class CreateRackView(APIView):
