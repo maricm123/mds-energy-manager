@@ -54,6 +54,11 @@ endpoints_urlpatterns = [
         "delete-rack/<int:id>",
         views_rack.DeleteRackView.as_view(),
         name="delete-rack"
+    ),
+    path(
+        "suggest",
+        views_rack.DeviceUnitsSuggestionView.as_view(),
+        name="suggest"
     )
 ]
 

@@ -1,10 +1,12 @@
 from rest_framework import generics, serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from apis.api_mds.serializers.serializers_rack import RackSerializer, CreateRackSerializer
+from apis.api_mds.serializers.serializers_rack import RackSerializer, CreateRackSerializer, \
+    DeviceUnitsSuggestionOutputSerializer, DeviceUnitsSuggestionInputSerializer
+from device.selectors import get_devices_from_list
 from rack.models import Rack
-from rack.selectors import get_rack_with_device_units
-from rack.services import create_rack
+from rack.selectors import get_rack_with_device_units, get_racks_from_list
+from rack.services import create_rack, suggest_algorithm_for_rack
 
 
 class GetAllRacksView(generics.ListAPIView):
@@ -47,3 +49,18 @@ class DeleteRackView(generics.DestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return Response(status=204)
+
+
+class DeviceUnitsSuggestionView(APIView):
+    """
+    Send rack and device ids
+    """
+    def post(self, request):
+        serializer = DeviceUnitsSuggestionInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        racks = get_racks_from_list(serializer.validated_data["rack_ids"])
+        devices = get_devices_from_list(serializer.validated_data["device_ids"])
+        suggest_algorithm_for_rack(racks, devices)
+
+        return Response(DeviceUnitsSuggestionOutputSerializer, status=200)

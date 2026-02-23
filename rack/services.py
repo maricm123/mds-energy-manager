@@ -17,3 +17,7 @@ def create_bulk_rack_units(rack_unit_rows):
         RackUnit.objects.bulk_create(rack_unit_rows)
     except IntegrityError:
         raise ValidationError({"rack": "Error with device setting to rack"})
+
+
+def suggest_algorithm_for_rack(racks, devices):
+    pass

@@ -43,3 +43,11 @@ class CreateDeviceSerializer(serializers.Serializer):
     serial_number = serializers.CharField(max_length=100)
     number_of_rack_units = serializers.IntegerField(min_value=1)
     electricity_consumption = serializers.IntegerField(min_value=1)
+
+
+class DeviceSuggestionSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    description = serializers.CharField(required=False, allow_blank=True)
+    serial_number = serializers.CharField(max_length=100)
+    number_of_rack_units = serializers.IntegerField(min_value=1)
+    electricity_consumption = serializers.IntegerField(min_value=1)

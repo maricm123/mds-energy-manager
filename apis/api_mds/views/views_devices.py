@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from apis.api_mds.serializers.serializers_device import (
     AddDeviceToRackSerializer,
     DeviceOutputSerializer,
-    CreateDeviceSerializer
+    CreateDeviceSerializer,
 )
 from apis.api_mds.serializers.serializers_rack import RackSerializer
 from device.models import Device
