@@ -30,6 +30,9 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 Application:
 - http://localhost:8000
 
+API endpoint
+- http://localhost:8000/api-mds
+
 Postgres:
 - Host: localhost
 - Port: 5433
