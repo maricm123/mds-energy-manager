@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from apis.api_mds.serializers.serializers_device import DeviceSuggestionSerializer
 from apis.utils import (
     build_devices_with_units_from_rack_units,
@@ -44,6 +43,9 @@ class CreateRackSerializer(serializers.Serializer):
     max_electricity_sustained = serializers.IntegerField(min_value=1)
 
 
+###########################################################
+# INPUT serializers for suggestion
+###########################################################
 class RackSuggestionSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     description = serializers.CharField(required=False, allow_blank=True)
@@ -75,5 +77,26 @@ class DeviceUnitsSuggestionInputSerializer(serializers.Serializer):
         return data
 
 
+###########################################################
+# OUTPUT serializers for suggestion
+###########################################################
+
+class DeviceSuggestionOutputSerializer(serializers.Serializer):
+    id = serializers.IntegerField(min_value=1)
+    name = serializers.CharField()
+    serial_number = serializers.CharField()
+    electricity_consumption = serializers.IntegerField(min_value=0)
+    number_of_rack_units = serializers.IntegerField(min_value=1)
+
+
+class RackSuggestionOutputSerializer(serializers.Serializer):
+    rack_id = serializers.IntegerField(min_value=1)
+    devices = DeviceSuggestionOutputSerializer(many=True)
+    total_power_used = serializers.IntegerField(min_value=0)
+    power_utilization_percent = serializers.FloatField(min_value=0.0, max_value=100.0)
+    units_used = serializers.IntegerField(min_value=0)
+
+
 class DeviceUnitsSuggestionOutputSerializer(serializers.Serializer):
-    pass
+    racks = RackSuggestionOutputSerializer(many=True)
+    unassigned_devices = DeviceSuggestionOutputSerializer(many=True)

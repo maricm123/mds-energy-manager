@@ -53,7 +53,7 @@ class DeleteRackView(generics.DestroyAPIView):
 
 class DeviceUnitsSuggestionView(APIView):
     """
-    Send rack and device ids
+    Send rack ids and device ids
     """
     def post(self, request):
         serializer = DeviceUnitsSuggestionInputSerializer(data=request.data)

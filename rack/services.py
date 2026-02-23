@@ -1,6 +1,6 @@
 from django.db import transaction, IntegrityError
+from rest_framework.exceptions import ValidationError
 from rack.models import Rack, RackUnit
-from django.core.exceptions import ValidationError
 from typing import Any
 
 
@@ -20,4 +20,14 @@ def create_bulk_rack_units(rack_unit_rows):
 
 
 def suggest_algorithm_for_rack(racks, devices):
-    pass
+    print(racks)
+    print(devices)
+# nadji najzahtevnije uredjaje (energy consumption i koliko jedinica zauzimaju)
+
+
+def order_devices_per_power_and_units(racks, devices):
+    """
+    Order devices per power and units based on rack situation
+    """
+    calculate_average_rack_max_energy
+    calculate_average_rack_max_units
