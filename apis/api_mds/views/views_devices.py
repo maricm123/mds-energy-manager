@@ -8,7 +8,7 @@ from apis.api_mds.serializers.serializers_device import (
 from apis.api_mds.serializers.serializers_rack import RackSerializer
 from device.models import Device
 from rest_framework.response import Response
-from device.services import add_device_to_rack, create_device
+from device.services import add_device_to_rack, create_device, device_update, delete_device
 from rack.models import Rack
 
 
@@ -32,7 +32,7 @@ class DeleteDeviceView(generics.DestroyAPIView):
 
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.delete()
+        delete_device(instance)
         return Response(status=204)
 
 
@@ -57,3 +57,55 @@ class CreateDeviceView(APIView):
 
         new_device = Device.objects.get(id=device.id)
         return Response(DeviceOutputSerializer(new_device).data, status=status.HTTP_201_CREATED)
+
+
+class UpdateDeviceView(generics.GenericAPIView):
+    class UpdateDeviceOutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Device
+            fields = [
+                "id",
+                "name",
+                "description",
+                "serial_number",
+                "number_of_rack_units",
+                "electricity_consumption",
+            ]
+
+    class UpdateDeviceInputSerializer(serializers.Serializer):
+        name = serializers.CharField(required=False, max_length=100)
+        description = serializers.CharField(required=False, allow_blank=True)
+        serial_number = serializers.CharField(required=False, max_length=100)
+        number_of_rack_units = serializers.IntegerField(required=False, min_value=1)
+        electricity_consumption = serializers.IntegerField(required=False, min_value=1)
+
+    lookup_field = "id"
+    queryset = Device.objects.all()
+
+    input_serializer_class = UpdateDeviceInputSerializer
+    output_serializer_class = UpdateDeviceOutputSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in ["GET"]:
+            return self.output_serializer_class
+        return self.input_serializer_class
+
+    def get(self, request, *args, **kwargs):
+        device = self.get_object()
+        return Response(self.output_serializer_class(device).data)
+
+    def patch(self, request, *args, **kwargs):
+        device = self.get_object()
+
+        serializer = self.input_serializer_class(
+            data=request.data,
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+
+        updated = device_update(
+            device=device,
+            data=serializer.validated_data,
+        )
+
+        return Response(self.output_serializer_class(updated).data)

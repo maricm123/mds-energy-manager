@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
+from django.utils import timezone
+
 from device.models import Device
 from rack.models import Rack, RackUnit
 from rack.selectors import get_already_populated_units_for_given_rack
@@ -70,3 +72,19 @@ def create_device(device_data: dict[str, Any]) -> Device:
             return Device.objects.create(**device_data)
     except IntegrityError:
         raise ValidationError({"serial_number": "Device with this serial number already exists."})
+
+
+def device_update(*, device: Device, data: dict) -> Device:
+    for key, value in data.items():
+        setattr(device, key, value)
+
+    device.save()
+    return device
+
+
+@transaction.atomic
+def delete_device(device):
+    RackUnit.objects.delete_device(device_id=device.id)
+
+    device.deleted_at = timezone.now()
+    device.save(update_fields=["deleted_at"])

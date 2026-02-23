@@ -22,11 +22,15 @@ endpoints_urlpatterns = [
         views_devices.CreateDeviceView.as_view(),
         name="create-device"
     ),
-
     path(
         "add-device-to-rack",
         views_devices.AddDeviceToRackView.as_view(),
         name="add-device-to-rack"
+    ),
+    path(
+        "update-device/<int:id>",
+        views_devices.UpdateDeviceView.as_view(),
+        name="update-device"
     ),
     path(
         "delete-device/<int:id>",
@@ -51,14 +55,19 @@ endpoints_urlpatterns = [
         name="create-rack"
     ),
     path(
+        "update-rack/<int:id>",
+        views_rack.UpdateRackView.as_view(),
+        name="update-rack"
+    ),
+    path(
         "delete-rack/<int:id>",
         views_rack.DeleteRackView.as_view(),
         name="delete-rack"
     ),
     path(
-        "suggest",
+        "suggest-algorithm",
         views_rack.DeviceUnitsSuggestionView.as_view(),
-        name="suggest"
+        name="suggest-algorithm"
     )
 ]
 

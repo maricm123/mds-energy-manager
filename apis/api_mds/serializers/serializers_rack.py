@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from apis.api_mds.serializers.serializers_device import DeviceSuggestionSerializer
 from apis.utils import (
     build_devices_with_units_from_rack_units,
     calculate_total_power_used_from_rack_units
@@ -58,10 +57,12 @@ class DeviceUnitsSuggestionInputSerializer(serializers.Serializer):
     rack_ids = serializers.ListField(
         child=serializers.IntegerField(min_value=1),
         allow_empty=False,
+        required=True
     )
     device_ids = serializers.ListField(
         child=serializers.IntegerField(min_value=1),
         allow_empty=False,
+        required=True
     )
 
     def validate(self, data):
@@ -89,8 +90,14 @@ class DeviceSuggestionOutputSerializer(serializers.Serializer):
     number_of_rack_units = serializers.IntegerField(min_value=1)
 
 
+class RackOutputSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rack
+        fields = "__all__"
+
+
 class RackSuggestionOutputSerializer(serializers.Serializer):
-    rack_id = serializers.IntegerField(min_value=1)
+    rack = RackOutputSerializer()
     devices = DeviceSuggestionOutputSerializer(many=True)
     total_power_used = serializers.IntegerField(min_value=0)
     power_utilization_percent = serializers.FloatField(min_value=0.0, max_value=100.0)

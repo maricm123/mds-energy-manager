@@ -14,6 +14,12 @@ class RackUnitQuerySet(models.QuerySet):
     def get_existing_devices(self, rack_id):
         return self.filter(rack_id=rack_id).values_list("device_id", flat=True).distinct()
 
+    def delete_device(self, device_id):
+        return self.filter(device_id=device_id).delete()
+
+    def delete_rack(self, rack_id):
+        return self.filter(rack_id=rack_id).delete()
+
 
 class RackUnitManager(models.Manager.from_queryset(RackUnitQuerySet)):
     pass
