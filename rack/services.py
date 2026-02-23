@@ -140,7 +140,13 @@ def order_devices_per_power_and_units(racks, devices):
     return ordered_devices
 
 
-def build_suggestion_output(racks, assigned_devices_by_rack, used_energy_by_rack, used_units_by_rack, unassigned_devices):
+def build_suggestion_output(
+        racks,
+        assigned_devices_by_rack,
+        used_energy_by_rack,
+        used_units_by_rack,
+        unassigned_devices
+):
     racks_output = []
 
     for rack in racks:

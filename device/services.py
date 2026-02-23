@@ -4,7 +4,6 @@ from django.db import IntegrityError, transaction
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-
 from device.models import Device
 from rack.models import Rack, RackUnit
 from rack.selectors import get_already_populated_units_for_given_rack

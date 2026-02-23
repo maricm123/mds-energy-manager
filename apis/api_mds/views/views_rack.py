@@ -6,7 +6,12 @@ from apis.api_mds.serializers.serializers_rack import RackSerializer, CreateRack
 from device.selectors import get_devices_from_list
 from rack.models import Rack
 from rack.selectors import get_rack_with_device_units, get_racks_from_list
-from rack.services import create_rack, suggest_algorithm_for_rack, build_suggestion_output, rack_update, delete_rack
+from rack.services import (
+    create_rack,
+    suggest_algorithm_for_rack,
+    build_suggestion_output,
+    rack_update, delete_rack
+)
 
 
 class GetAllRacksView(generics.ListAPIView):
