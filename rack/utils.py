@@ -1,6 +1,6 @@
 
 
-def calculate_average_rack_max_energy(racks):
+def calculate_average_rack_energy(racks):
     total = 0
     count = 0
 
@@ -11,12 +11,12 @@ def calculate_average_rack_max_energy(racks):
     return total / count
 
 
-def calculate_average_rack_max_units(racks):
+def calculate_average_rack_units(racks):
     total = 0
     count = 0
 
     for rack in racks:
-        total += rack.max_electricity_sustained
+        total += rack.total_units
         count += 1
 
     return total / count

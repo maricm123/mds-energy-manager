@@ -2,8 +2,11 @@ from django.db import transaction, IntegrityError
 from rest_framework.exceptions import ValidationError
 from rack.models import Rack, RackUnit
 from typing import Any
-from rack.utils import calculate_average_rack_max_energy, calculate_average_rack_max_units, \
+from rack.utils import (
+    calculate_average_rack_energy,
+    calculate_average_rack_units,
     calculate_power_utilization_percent
+)
 from django.utils import timezone
 
 
@@ -65,6 +68,33 @@ def _calculate_extend_after_placement(
     return max_util - min_util
 
 
+def _choose_best_rack_for_device(*, racks, device, used_units_by_rack, used_energy_by_rack):
+    current_best_rack = None
+    best_extend = None
+
+    for rack in racks:
+        if not _can_store_device_in_rack(
+            rack=rack,
+            device=device,
+            used_units=used_units_by_rack[rack.id],
+            used_energy=used_energy_by_rack[rack.id]
+        ):
+            continue
+
+        extend = _calculate_extend_after_placement(
+            racks=racks,
+            used_energy_by_rack=used_energy_by_rack,
+            candidate_rack_id=rack.id,
+            device_energy=device.electricity_consumption,
+        )
+
+        if best_extend is None or extend < best_extend:
+            best_extend = extend
+            current_best_rack = rack
+
+    return current_best_rack
+
+
 def suggest_algorithm_for_rack(racks, devices):
     ordered_devices = order_devices_per_power_and_units(racks, devices)
 
@@ -80,28 +110,12 @@ def suggest_algorithm_for_rack(racks, devices):
     unassigned_devices = []
 
     for device in ordered_devices:
-        current_best_rack = None
-        best_extend = None
-
-        for rack in racks:
-            if not _can_store_device_in_rack(
-                rack=rack,
-                device=device,
-                used_units=used_units_by_rack[rack.id],
-                used_energy=used_energy_by_rack[rack.id],
-            ):
-                continue
-
-            extend = _calculate_extend_after_placement(
-                racks=racks,
-                used_energy_by_rack=used_energy_by_rack,
-                candidate_rack_id=rack.id,
-                device_energy=device.electricity_consumption,
-            )
-
-            if best_extend is None or extend < best_extend:
-                best_extend = extend
-                current_best_rack = rack
+        current_best_rack = _choose_best_rack_for_device(
+            racks=racks,
+            device=device,
+            used_units_by_rack=used_units_by_rack,
+            used_energy_by_rack=used_energy_by_rack,
+        )
 
         if current_best_rack is None:
             unassigned_devices.append(device)
@@ -118,8 +132,8 @@ def order_devices_per_power_and_units(racks, devices):
     """
     Order devices per power and units based on rack situation
     """
-    average_rack_max_energy = calculate_average_rack_max_energy(racks)
-    average_rack_max_units = calculate_average_rack_max_units(racks)
+    average_rack_max_energy = calculate_average_rack_energy(racks)
+    average_rack_max_units = calculate_average_rack_units(racks)
 
     scored_devices = []
 
