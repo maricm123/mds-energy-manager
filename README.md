@@ -4,69 +4,143 @@ REST API application
 
 ---
 
-## Prerequisites
+# Quick Start
 
-- Docker
-- Docker Compose (included with Docker Desktop)
+Follow these steps to run the project in development mode with hot reload:
+
+## Add `.env` file
+
+Create a `.env` file in the project root directory  
+(next to `docker-compose.yml` and `docker-compose.dev.yml`).
+
+Use the `.env` file that was provided to the team.
+
+️ The application will NOT start without this file because it contains required environment variables (database credentials, etc).
 
 ---
 
-## 1) Create `.env`
+##  Start the project (Development mode)
 
-Create a **`.env`** file in the project root (next to `docker-compose.yml` and `docker-compose.dev.yml`).
+Run:
 
----
-
-## 2) Run in Development mode (hot reload)
-
-Development uses:
-- `docker-compose.yml`
-- `docker-compose.dev.yml` (Django `runserver` + source code mounted into the container)
-
-Start:
-
+```
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```
 
-Application:
-- http://localhost:8000
+API will be available at:
 
-API endpoint
-- http://localhost:8000/api-mds
+```
+http://localhost:8000/api-mds
+```
 
-Postgres:
-- Host: localhost
-- Port: 5433
+Application will be available at:
+
+```
+http://localhost:8000
+```
+
+---
+
+## Stop the project
+
+```
+docker compose -f docker-compose.yml -f docker-compose.dev.yml down
+```
+
+
+##  Run Tests
+
+Run tests inside the web container:
+
+Run all the tests:
+```
+docker compose exec web pytest
+```
+
+Run specified file tests:
+```
+docker compose exec web pytest tests/integration/test_integration.py
+```
+Or 
+```
+docker compose exec web pytest tests/unit/services/test_services.py
+```
+Or 
+```
+docker compose exec web pytest tests/unit/utils/test_utils.py
+```
+
+If containers are not running, start them first:
+
+```
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
+
+Then run tests.
+---
+
+# Development Details
+
+Development mode uses:
+
+- `docker-compose.yml`
+- `docker-compose.dev.yml`  
+  (Django `runserver` + source code mounted into container for hot reload)
+
+---
+
+# Database Configuration
+
+Postgres connection (from host machine):
+
+- Host: `localhost`
+- Port: `5433`
 - Database: value from `DJ_DB_NAME`
 - Username: `DJ_DB_USER`
 - Password: `DJ_DB_PASSWORD`
 
-Stop:
+If port `5433` is already in use, change the mapping in `docker-compose.yml`, for example:
 
-docker compose -f docker-compose.yml -f docker-compose.dev.yml down
-
-Reset database (removes volume data):
-
-docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v  
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
-
-> Migrations run automatically on container startup (`python manage.py migrate --noinput`).
+```
+"5434:5432"
+```
 
 ---
 
+# Reset Database (removes volume data)
 
-## 4) Django management commands
+```
+docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```
+
+> Migrations run automatically on container startup:
+>
+> `python manage.py migrate --noinput`
+
+---
+
+# Django Management Commands
 
 Run migrations manually:
 
+```
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec web python manage.py migrate
+```
 
 Create a superuser:
 
+```
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec web python manage.py createsuperuser
+```
 
 ---
 
-## Notes
+# Prerequisites
 
-- If port `5433` is already in use, change the DB mapping in `docker-compose.yml` (e.g. `"5434:5432"`).
-- If port `8000` is already in use, change `"8000:8000"` in `docker-compose.yml`.
+- Docker  
+- Docker Compose (included with Docker Desktop)
+
+---
+
+**MDS Energy Manager – Development Setup**
