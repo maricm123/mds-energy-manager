@@ -34,6 +34,16 @@ class GetRackView(generics.RetrieveAPIView):
 
 
 class CreateRackView(APIView):
+    """
+    JSON example
+    {
+      "name": "Rack A1",
+      "description": "Main rack in server room",
+      "serial_number": "RACK-001",
+      "total_units": 42,
+      "max_electricity_sustained": 12000
+    }
+    """
     def post(self, request):
         serializer = CreateRackSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -111,6 +121,11 @@ class DeleteRackView(generics.DestroyAPIView):
 class DeviceUnitsSuggestionView(APIView):
     """
     Send rack ids and device ids
+    JSON example:
+    {
+      "rack_ids": [1,5],
+      "device_ids": [6, 8, 4, 9, 10]
+    }
     """
     def post(self, request):
         serializer = DeviceUnitsSuggestionInputSerializer(data=request.data)

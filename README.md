@@ -39,6 +39,23 @@ Application will be available at:
 http://localhost:8000
 ```
 
+API docs (Swagger UI) will be available at:
+
+```
+http://localhost:8000/api-mds/docs
+```
+
+API docs (Redoc) will be available at:
+
+```
+http://localhost:8000/api-mds/redoc
+```
+
+OpenAPI schema will be available at:
+```
+http://localhost:8000/api-mds/schema
+```
+
 ---
 
 ## Stop the project

@@ -37,6 +37,13 @@ class DeleteDeviceView(generics.DestroyAPIView):
 
 
 class AddDeviceToRackView(APIView):
+    """
+    JSON example:
+    {
+      "device_id": 6,
+      "rack_id": 1
+    }
+    """
     def post(self, request):
         serializer = AddDeviceToRackSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -50,6 +57,16 @@ class AddDeviceToRackView(APIView):
 
 
 class CreateDeviceView(APIView):
+    """
+    JSON example:
+    {
+      "name": "Cisco Switch 9300",
+      "description": "Core network switch",
+      "serial_number": "DEV-9300-001",
+      "number_of_rack_units": 2,
+      "electricity_consumption": 450
+    }
+    """
     def post(self, request):
         serializer = CreateDeviceSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
